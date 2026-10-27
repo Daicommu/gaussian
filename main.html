@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gaussian Function</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+        body {
+            background: #111827;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        #graph {
+            height: 300px;
+            position: relative;
+            background: #1f2937;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .point {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #38bdf8;
+            transform: translate(-50%, 50%);
+        }
+
+        .control {
+            margin: 20px 0;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        span {
+            color: #38bdf8;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Gaussian Function</h2>
+
+    <div id="graph"></div>
+
+    <div class="control">
+        <label>mu: <span id="centerValue">0</span></label>
+        <input id="center" type="range" min="-5" max="5" step="0.1" value="0">
+    </div>
+
+    <div class="control">
+        <label>sigma: <span id="widthValue">1</span></label>
+        <input id="width" type="range" min="0.3" max="4" step="0.1" value="1">
+    </div>
+    <div class="control">
+        <label>Steps: <span id="stepsValue">200</span></label>
+        <input id="steps" type="range" min="150" max="400" step="10" value="200">
+    </div>
+    <script>
+        // Gaussian function
+        function gaussian(x, mu, sigma) {
+            return Math.exp(
+                -Math.pow(x - mu, 2)
+                /
+                (2 * sigma * sigma)
+            );
+        }
+
+        function draw() {
+            const center = Number($("#center").val());
+            const width = Number($("#width").val());
+            const steps = Number($("#steps").val());
+
+            $("#centerValue").text(center.toFixed(1));
+            $("#widthValue").text(width.toFixed(1));
+            $("#stepsValue").text(steps.toFixed(1));
+            
+            //const graphWidth = $("#graph").width();
+            //const graphHeight = $("#graph").height();
+
+            // Remove old circles
+            $("#graph").empty();
+
+            // Create one circle for each data point
+            for (let i = 0; i < steps; i++) {
+                const x = -10 + (i / ( steps - 1 )) * 20;
+                const y = gaussian(x, center, width);
+
+                const left = (i / ( steps - 1 )) * 100;
+                const bottom = y * 90;
+
+                $("<div>")
+                    .addClass("point")
+                    .css({
+                        left: left + "%",
+                        bottom: bottom + "%"
+                    })
+                    .appendTo("#graph");
+            }
+        }
+
+        // Update when either input changes
+        $("#center, #width, #steps").on("input", draw);
+
+        // Initial graph
+        $(function () {
+            draw();
+        });
+    </script>
+
+</body>
+</html>
